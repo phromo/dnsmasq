@@ -8,9 +8,9 @@ if platform?('ubuntu') && node['platform_version'] >= '18.04'
 After=systemd-resolved.service
 
 [Service]
-ExecStartPre=/usr/bin/systemctl stop systemd-resolved.service
-ExecStartPost=/usr/bin/systemctl start systemd-resolved.service
-%}
+ExecStartPre=systemctl stop systemd-resolved.service
+ExecStartPost=systemctl start systemd-resolved.service
+}
   end
 
   service 'systemd-resolved' do
