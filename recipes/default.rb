@@ -1,10 +1,16 @@
 if platform?('ubuntu') && node['platform_version'] >= '18.04'
-  directory '/etc/systemd/resolved.conf.d'
+  directory '/etc/systemd/system/dnsmasq.service.d'
 
   file 'Fix systemd-resolved conflict' do
-    path '/etc/systemd/resolved.conf.d/dnsmasq.conf'
-    content "[Resolve]\nDNSStubListener=no"
-    notifies :restart, 'service[systemd-resolved]', :immediately
+    path '/etc/systemd/system/dnsmasq.service.d/systemd-resolved-fix.conf'
+    content %{
+[Unit]
+After=systemd-resolved.service
+
+[Service]
+ExecStartPre=/usr/bin/systemctl stop systemd-resolved.service
+ExecStartPost=/usr/bin/systemctl start systemd-resolved.service
+%}
   end
 
   service 'systemd-resolved' do
